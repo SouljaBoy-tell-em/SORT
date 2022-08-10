@@ -36,10 +36,14 @@ int main () {
     while ((ch = getc (fp)) != EOF) {
 
       str[i][j] = ch;
+      
       if (ch == '\n') {
+        
         str[i][j] = '\0';
         break;
+
       }
+      
       j++;
       lim++;
 
@@ -62,15 +66,15 @@ int main () {
     }
   }
 
-  for (i = 0; i < amount; i++) {
+  for (i = 0; i < amount; i++)
       puts (str[i]);
-  }
 
   fclose (fp);
   FILE * rec;
   rec = fopen ("recordSort.txt", "a");
 
   for (i = 0; i < amount; i++) {
+    
     fwrite (str[i], sizeof (char), strlen (str[i]), rec);
     putc ('\n', fp);
 
@@ -85,6 +89,7 @@ int main () {
 void traid12 (char * str1, char * str2) {
 
   char str3[LEN];
+  
   strcpy (str3, str1);
   strcpy (str1, str2);
   strcpy (str2, str3);
@@ -94,8 +99,10 @@ void traid12 (char * str1, char * str2) {
 void space_to_end (char * str, int pos) {
 
   char pr[LEN - pos];
+  
   for (int i = 0; i < LEN - pos; i++)
     pr[i] = ' ';
+  
   strcat (str, pr);
 
 }
