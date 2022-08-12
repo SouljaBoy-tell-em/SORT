@@ -3,13 +3,14 @@
 #include <string.h>
 #include <windows.h>
 
+#define LEN 50
 
-int Amount (FILE *, int *);
-void brain_sort (void (*pr) (char *, char *, int *), char * [], int, int *);
-void traid12 (char *, char *, int *);
+int i = 0, j = 0;
+
+int Amount (FILE *);
+void brain_sort (void (*pr) (char *, char *), char * [], int);
+void traid12 (char *, char *);
 void record (FILE *, char * [], int);
-
-int i, j;
 
 int main () {
 
@@ -27,47 +28,39 @@ int main () {
 
   puts ("File opened!");
 
+  int amount = Amount (fp);
   char ch;
-  int len = 0;
-  int amount = Amount (fp, &len);
 
-  void ( * pr) (char *, char *, int *);
+  char str [amount][LEN];
+  int str_len [amount];
+  char * pt [amount];
+  void ( * pr) (char *, char *);
   pr = traid12;
 
-  int j = 0;
-  unsigned long long lim = 0;
-  char str[amount][len];
-  char * pt[amount];
+  fseek (fp, 0, SEEK_SET);
 
-  for (i = 0; i < amount; i++) {
+  while ((ch = getc (fp)) != EOF) {
 
-    j = 0;
-    fseek (fp, lim, SEEK_SET);
+    if (ch == '\n') {
 
-    while ((ch = getc (fp)) != EOF) {
-
-      * (* (str + i) + j) = ch;
-      pt[i] = * (str + i);
-
-      if (ch == '\n') {
-
-        * (* (str + i) + j) = '\0';
-        break;
-
-      }
-
-      j++;
-      lim++;
+      str[i][j] = '\0';
+      pt[i] = str[i];
+      str_len[i] = j;
+      i++;
+      j = 0;
+      continue;
 
     }
 
-    lim += 2;
+    str[i][j] = ch;
+    j++;
 
   }
 
-  brain_sort (pr, pt, amount, &len);
-
   fclose (fp);
+
+  brain_sort (pr, pt, amount);
+
 
   FILE * rec;
   if ((rec = fopen ("recordSort.txt", "a")) == NULL) {
@@ -84,51 +77,38 @@ int main () {
   putchar ('\n');
 
   for (i = 0; i < amount; i++)
-    puts (str[i]);
+    puts (pt[i]);
 
   return 0;
 
 }
 
-void traid12 (char * str1, char * str2, int * len) {
+void traid12 (char * str1, char * str2) {
 
-  char str3[*len];
+  char str3[LEN];
   strcpy (str3, str1);
   strcpy (str1, str2);
   strcpy (str2, str3);
 
 }
 
-int Amount (FILE * fp, int * maxLength) {
+int Amount (FILE * fp) {
 
   char ch;
-  int amount = 0, max = -1, i = 0;
+  int amount = 0;
 
-  while ((ch = getc(fp)) != EOF) {
+  while ((ch = getc (fp)) != EOF) {
 
-    i++;
-
-    if (ch == '\n') {
-
+    if (ch == '\n')
       amount++;
 
-      if (i >= max)
-        max = i;
-
-      i = 0;
-
-    }
-
   }
-
-
-  * maxLength = max;
 
   return amount;
 
 }
 
-void brain_sort (void (*fp)(char *, char *, int *), char * str[], int amount, int * len) {
+void brain_sort (void (*fp)(char *, char *), char * str[], int amount) {
 
   int i = 0, j = 0;
 
@@ -140,7 +120,7 @@ void brain_sort (void (*fp)(char *, char *, int *), char * str[], int amount, in
         continue;
 
       if (strcmp(str[i], str[j]) == -1)
-        traid12 (str[i], str[j], len);
+        (* fp) (str[i], str[j]);
 
     }
 
