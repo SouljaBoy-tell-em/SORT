@@ -11,47 +11,45 @@ unsigned long fileSize (FILE * file, struct stat buf);
 void statusMemory (char * mem);
 unsigned long amountOfString (char * mem);
 int comp (const void * aptr, const void * bptr);
+void copyBuf (const char * mem_start, char * buffer);
 
 
 int main (void) {
 
     struct stat buf;
-    FILE * file = fopen ("sort1.txt", "r");
+    FILE * file = fopen ("sort.txt", "r");
     openStatus (file);
     unsigned long filesize = fileSize (file, buf);
     char * mem_start = (char * ) calloc (sizeof (char), filesize);
+    char * copy_mem_start = (char * ) calloc (sizeof (char), filesize);
     statusMemory (mem_start);
     fread (mem_start, sizeof (char), filesize, file);
     unsigned long amount_of_string = amountOfString (mem_start);
-    char * str [amount_of_string];
-    int j = 0;
+    copyBuf (mem_start, copy_mem_start);
     
-    //qsort (str, amount_of_string, sizeof (char *), comp);
-	
-	for (int i = 0; i < strlen (mem_start); i++) {
-		
-		
-		if (mem_start[i] == '\n') {
-			
-			mem_start[i] = '\0';
-			str[j] = mem_start;
-			j++;
-		}
-		
-		mem_start++;
-		
-	}
-	
-	puts (str[0]);
-	
     
+
     return 0;
+}
+
+
+void copyBuf (const char * mem_start, char * buffer) {
+
+    for (int i = 0; i < strlen (mem_start); i++) {
+
+        if (mem_start[i] == '\n') {
+
+            buffer[i] = '\0';
+        }
+
+        buffer[i] = mem_start[i];
+    }
 }
 
 
 int comp (const void * aptr, const void * bptr)
 {
-	
+
 	const char * str1 = * (const char ** ) aptr;
 	const char * str2 = * (const char ** ) bptr;
 
@@ -60,10 +58,10 @@ int comp (const void * aptr, const void * bptr)
 
     int i = 0;
     int j = 0;
-    
+
     while(1)
-    {   
-        while(!isalpha(str1[i]) && (str1[i] != '\0')) 
+    {
+        while(!isalpha(str1[i]) && (str1[i] != '\0'))
         {
             i++;
         }
@@ -76,6 +74,7 @@ int comp (const void * aptr, const void * bptr)
         i++;
         j++;
     }
+
     return(str1[i] - str2[j]);
 }
 
