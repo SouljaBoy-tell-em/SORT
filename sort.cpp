@@ -10,35 +10,88 @@ void openStatus (FILE * file);
 unsigned long FileSize (FILE * file, struct stat buf);
 void statusMemory (char * mem);
 unsigned int amountOfString (char * mem);
-int comp (const void * aptr, const void * bptr);
+int mycomp (const void * aptr, const void * bptr);
 void copyBuf (const char * mem_start, char * buffer);
 void pointerGetStr (char * buffer, char ** getAdress, unsigned long filesize);
+void fileRecord (char ** getAdress, unsigned long amount_of_string, FILE * rec);
+int comp (const void * aptr, const void * bptr);
 
 
 int main (void) {
 
     struct stat buf;
 
-    FILE * file = fopen ("sort.txt", "r");
+    // OPENING FILES:
+
+    FILE * file = fopen ("sort.txt", "rb");
+    FILE * rec = fopen ("aftersort.txt", "w");
     openStatus (file);
+    openStatus (rec);
+
+    // --------------
+
+    // memory allocation: start memory;
 
     unsigned long filesize = FileSize (file, buf);
     char * mem_start = (char * ) calloc (filesize, sizeof (char));
     statusMemory (mem_start);
+
+    // --------------
+
+    // memory allocation: copy start memory;
+
     char * copy_mem_start = (char * ) calloc (filesize, sizeof (char));
     statusMemory (copy_mem_start);
+
+    // --------------
+
     fread (mem_start, sizeof (char), filesize, file);
     unsigned long amount_of_string = amountOfString (mem_start);
-    char ** getAdress = (char ** ) calloc (amount_of_string, sizeof (char * ));
+
+    // memory allocation: pointers for copy start memory;
+
+    char ** getAdress = (char ** ) calloc (amount_of_string, sizeof (char * ) + 1);
     copyBuf (mem_start, copy_mem_start);
-    pointerGetStr(copy_mem_start, getAdress, filesize);
 
-    qsort (getAdress, amount_of_string, sizeof (char *), comp);
+    // --------------
 
-    for (int i = 0; i < amount_of_string; i++)
-        puts (getAdress[i]);
+    // first sort:
+
+    pointerGetStr (copy_mem_start, getAdress, filesize);
+    qsort (getAdress, amount_of_string, sizeof (char *), mycomp);
+    fileRecord (getAdress, amount_of_string, rec);
+
+    // --------------
+
+    // second sort:
+
+    /*
+
+    pointerGetStr (copy_mem_start, getAdress, filesize);
+    qsort (getAdress, amount_of_string, sizeof (char *), mycomp);
+    fileRecord (getAdress, amount_of_string, rec);
+
+    */
+
+    // --------------
+
+
+    free (mem_start);
+    free (copy_mem_start);
+    free (getAdress);
+    fclose (file);
+    fclose (rec);
 
     return 0;
+}
+
+
+void fileRecord (char ** getAdress, unsigned long amount_of_string, FILE * rec) {
+
+    int i = 0;
+    for (i = 0; i < amount_of_string; i++)
+       if (getAdress[i][0] != '\r')
+            fputs (getAdress[i], rec);
 }
 
 
@@ -85,6 +138,16 @@ void copyBuf (const char * mem_start, char * buffer) {
 }
 
 
+int comp (const void * aptr, const void * bptr) {
+
+    const char * str1 = * (const char ** ) aptr;
+    const char * str2 = * (const char ** ) bptr;
+
+    return (* str1) - (* str2);
+
+}
+
+
 int mycomp (const void * aptr, const void * bptr)
 {
 
@@ -96,7 +159,7 @@ int mycomp (const void * aptr, const void * bptr)
     assert(str1);
     assert(str2);
 
-    while(true) {
+    while (true) {
 
         while(!isalpha(str1[i]) && (str1[i] != '\0'))
             i++;
