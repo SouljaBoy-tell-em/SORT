@@ -55,17 +55,10 @@ int main (void) {
     char ** getAdress = (char ** ) calloc (amount_of_string, sizeof (char * ) + 1);
     copyBuf (mem_start, copy_mem_start);
 
-    // --------------
 
-    // first sort:
+
 
     /*
-
-    pointerGetStr (copy_mem_start, getAdress, filesize);
-    qsort (getAdress, amount_of_string, sizeof (char *), comp);
-    fileRecord (getAdress, amount_of_string, rec);
-
-    */
 
     int arr [5] = {13, 3, 5, 1, -3};
     my_sort (arr, 5, sizeof (int), test_comp);
@@ -73,6 +66,26 @@ int main (void) {
     for (int i = 0; i < 5; i++)
         printf ("%d ", arr[i]);
 
+    */
+
+    // first sort:
+
+    pointerGetStr (copy_mem_start, getAdress, filesize);
+    qsort (getAdress, amount_of_string, sizeof (char *), comp);
+    fileRecord (getAdress, amount_of_string, rec);
+
+    // --------------
+
+    // second (my) sort:
+
+    pointerGetStr (copy_mem_start, getAdress, filesize);
+    my_sort (getAdress, amount_of_string, sizeof (char *), comp);
+    fileRecord (getAdress, amount_of_string, rec);
+
+    // --------------
+
+    // original text:
+    fputs (mem_start, rec);
 
     free (mem_start);
     free (copy_mem_start);
@@ -113,6 +126,7 @@ void my_sort (void * base, size_t num, size_t size, int (*compare) (const void *
         }
     }
 
+    free (save);
 }
 
 
@@ -125,10 +139,10 @@ int test_comp (const void * i, const void * j)
   //printf ("A: %d; B: %d\n", a, b);
 
   if (a < b)
-        return -1;
+        return 1;
 
   if (a > b)
-        return 1;
+        return -1;
 
   return 0;
 
