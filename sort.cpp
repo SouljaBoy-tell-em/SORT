@@ -12,6 +12,7 @@ void statusMemory (char * mem);
 unsigned int amountOfString (char * mem);
 int comp (const void * aptr, const void * bptr);
 void copyBuf (const char * mem_start, char * buffer);
+void pointerGetStr (char * buffer, char ** getAdress, unsigned long filesize);
 
 
 int main (void) {
@@ -30,30 +31,35 @@ int main (void) {
     unsigned long amount_of_string = amountOfString (mem_start);
     char ** getAdress = (char ** ) calloc (amount_of_string, sizeof (char * ));
     copyBuf (mem_start, copy_mem_start);
+    pointerGetStr(copy_mem_start, getAdress, filesize);
 
-    //puts (copy_mem_start);
 
-    int j = 0;
+
+    return 0;
+}
+
+
+void pointerGetStr (char * buffer, char ** getAdress, unsigned long filesize) {
+
+    unsigned long i = 0, j = 0;
     bool flag = false;
 
-    for (int i = 0; i < strlen (mem_start); i++) {
+    for (i = 0; i < filesize; i++) {
 
         if (flag == false) {
 
-            getAdress[j] = &copy_mem_start[i];
+            getAdress [j] = &buffer [i];
             flag = true;
             j++;
             continue;
         }
 
-        if (copy_mem_start[i] == '\0') {
+        if (buffer[i] == '\0') {
 
-            getAdress [j] = &copy_mem_start[i+1];
+            getAdress [j] = &buffer [i+1];
             j++;
         }
     }
-
-    return 0;
 }
 
 
