@@ -15,6 +15,8 @@ void copyBuf (const char * mem_start, char * buffer);
 void pointerGetStr (char * buffer, char ** getAdress, unsigned long filesize);
 void fileRecord (char ** getAdress, unsigned long amount_of_string, FILE * rec);
 int comp (const void * aptr, const void * bptr);
+void my_sort (void * base, size_t num, size_t size, int (*compare) (const void * obj1, const void * obj2));
+int test_comp (const void * obj1, const void * obj2);
 
 
 int main (void) {
@@ -57,23 +59,19 @@ int main (void) {
 
     // first sort:
 
-    pointerGetStr (copy_mem_start, getAdress, filesize);
-    qsort (getAdress, amount_of_string, sizeof (char *), mycomp);
-    fileRecord (getAdress, amount_of_string, rec);
-
-    // --------------
-
-    // second sort:
-
     /*
 
     pointerGetStr (copy_mem_start, getAdress, filesize);
-    qsort (getAdress, amount_of_string, sizeof (char *), mycomp);
+    qsort (getAdress, amount_of_string, sizeof (char *), comp);
     fileRecord (getAdress, amount_of_string, rec);
 
     */
 
-    // --------------
+    int arr [5] = {13, 3, 5, 1, -3};
+    my_sort (arr, 5, sizeof (int), test_comp);
+
+    for (int i = 0; i < 5; i++)
+        printf ("%d ", arr[i]);
 
 
     free (mem_start);
@@ -83,6 +81,57 @@ int main (void) {
     fclose (rec);
 
     return 0;
+}
+
+
+void my_sort (void * base, size_t num, size_t size, int (*compare) (const void * obj1, const void * obj2)) {
+
+    int i = 0, j = 0;
+    void * save = (void * ) calloc (1, size);
+
+    for (i = 0; i < num; i++) {
+
+        for (j = num - 1; j > i; j--) {
+
+            //printf ("A: %p B: %p\n", base + (j - 1) * size, base + j * size);
+
+            if ((*compare) (base + (j - 1) * size, base + j * size) < 0) {
+
+                memcpy (save                 , base + (j - 1) * size, size);
+                memcpy (base + (j - 1) * size, base + j * size      , size);
+                memcpy (base + j * size      , save                 , size);
+            }
+
+             if ((*compare) (base + (j - 1) * size, base + j * size) > 0) {
+
+                memcpy (save                 , base + j * size            , size);
+                memcpy (base + j * size       , base + (j - 1) * size     , size);
+                memcpy (base + (j - 1) * size, save                       , size);
+
+            }
+
+        }
+    }
+
+}
+
+
+int test_comp (const void * i, const void * j)
+{
+
+  const int  a = *(const int *) i;
+  const int  b = *(const int *) j;
+
+  //printf ("A: %d; B: %d\n", a, b);
+
+  if (a < b)
+        return -1;
+
+  if (a > b)
+        return 1;
+
+  return 0;
+
 }
 
 
@@ -138,17 +187,7 @@ void copyBuf (const char * mem_start, char * buffer) {
 }
 
 
-int comp (const void * aptr, const void * bptr) {
-
-    const char * str1 = * (const char ** ) aptr;
-    const char * str2 = * (const char ** ) bptr;
-
-    return (* str1) - (* str2);
-
-}
-
-
-int mycomp (const void * aptr, const void * bptr)
+int comp (const void * aptr, const void * bptr)
 {
 
 	const char * str1 = * (const char ** ) aptr;
