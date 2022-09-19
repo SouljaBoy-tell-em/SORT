@@ -7,11 +7,12 @@
 
 
 void openStatus (FILE * file);
-unsigned long fileSize (FILE * file, struct stat buf);
+unsigned long FileSize (FILE * file, struct stat buf);
 void statusMemory (char * mem);
 unsigned int amountOfString (char * mem);
 int comp (const void * aptr, const void * bptr);
 void copyBuf (const char * mem_start, char * buffer);
+
 
 int main (void) {
 
@@ -20,17 +21,37 @@ int main (void) {
     FILE * file = fopen ("sort.txt", "r");
     openStatus (file);
 
-    unsigned long filesize = fileSize (file, buf);
+    unsigned long filesize = FileSize (file, buf);
     char * mem_start = (char * ) calloc (filesize, sizeof (char));
     statusMemory (mem_start);
     char * copy_mem_start = (char * ) calloc (filesize, sizeof (char));
     statusMemory (copy_mem_start);
-    char ** getAdress = (char ** ) calloc (filesize, sizeof (char * ));
-
     fread (mem_start, sizeof (char), filesize, file);
     unsigned long amount_of_string = amountOfString (mem_start);
+    char ** getAdress = (char ** ) calloc (amount_of_string, sizeof (char * ));
     copyBuf (mem_start, copy_mem_start);
 
+    //puts (copy_mem_start);
+
+    int j = 0;
+    bool flag = false;
+
+    for (int i = 0; i < strlen (mem_start); i++) {
+
+        if (flag == false) {
+
+            getAdress[j] = &copy_mem_start[i];
+            flag = true;
+            j++;
+            continue;
+        }
+
+        if (copy_mem_start[i] == '\0') {
+
+            getAdress [j] = &copy_mem_start[i+1];
+            j++;
+        }
+    }
 
     return 0;
 }
@@ -38,8 +59,19 @@ int main (void) {
 
 void copyBuf (const char * mem_start, char * buffer) {
 
-    for (int i = 0; i < strlen (mem_start); i++)
+    for (int i = 0; i < strlen (mem_start); i++) {
+
+        if (mem_start[i] == EOF)
+            buffer[i] = '\0';
+
+        if (mem_start [i] == '\n') {
+
+            buffer[i] = '\0';
+            continue;
+        }
+
         buffer [i] = mem_start [i];
+    }
 
 }
 
@@ -60,6 +92,7 @@ int comp (const void * aptr, const void * bptr)
 
         while(!isalpha(str1[i]) && (str1[i] != '\0'))
             i++;
+
         while(!isalpha(str2[j]) && (str2[j] != '\0'))
             j++;
 
@@ -98,7 +131,7 @@ void statusMemory (char * mem) {
 }
 
 
-unsigned long fileSize (FILE * file, struct stat buf) {
+unsigned long FileSize (FILE * file, struct stat buf) {
 
     fstat (fileno (file), &buf);
 
@@ -116,5 +149,3 @@ unsigned int amountOfString (char * mem) {
 
     return amount;
 }
-
-
