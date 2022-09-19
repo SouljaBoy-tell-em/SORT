@@ -33,7 +33,10 @@ int main (void) {
     copyBuf (mem_start, copy_mem_start);
     pointerGetStr(copy_mem_start, getAdress, filesize);
 
+    qsort (getAdress, amount_of_string, sizeof (char *), comp);
 
+    for (int i = 0; i < amount_of_string; i++)
+        puts (getAdress[i]);
 
     return 0;
 }
@@ -82,17 +85,16 @@ void copyBuf (const char * mem_start, char * buffer) {
 }
 
 
-int comp (const void * aptr, const void * bptr)
+int mycomp (const void * aptr, const void * bptr)
 {
 
 	const char * str1 = * (const char ** ) aptr;
 	const char * str2 = * (const char ** ) bptr;
+    int i = 0;
+    int j = 0;
 
     assert(str1);
     assert(str2);
-
-    int i = 0;
-    int j = 0;
 
     while(true) {
 
