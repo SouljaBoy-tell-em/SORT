@@ -24,68 +24,46 @@ int main (void) {
     struct stat buf;
 
     // OPENING FILES:
-
     FILE * file = fopen ("sort.txt", "rb");
     FILE * rec = fopen ("aftersort.txt", "w");
     openStatus (file);
     openStatus (rec);
-
     // --------------
 
     // memory allocation: start memory;
-
     unsigned long filesize = FileSize (file, buf);
     char * mem_start = (char * ) calloc (filesize, sizeof (char));
     statusMemory (mem_start);
-
     // --------------
 
     // memory allocation: copy start memory;
-
     char * copy_mem_start = (char * ) calloc (filesize, sizeof (char));
     statusMemory (copy_mem_start);
-
     // --------------
 
     fread (mem_start, sizeof (char), filesize, file);
     unsigned long amount_of_string = amountOfString (mem_start);
 
     // memory allocation: pointers for copy start memory;
-
     char ** getAdress = (char ** ) calloc (amount_of_string, sizeof (char * ) + 1);
     copyBuf (mem_start, copy_mem_start);
-
-
-
-
-    /*
-
-    int arr [5] = {13, 3, 5, 1, -3};
-    my_sort (arr, 5, sizeof (int), test_comp);
-
-    for (int i = 0; i < 5; i++)
-        printf ("%d ", arr[i]);
-
-    */
+    // --------------
 
     // first sort:
-
     pointerGetStr (copy_mem_start, getAdress, filesize);
     qsort (getAdress, amount_of_string, sizeof (char *), comp);
     fileRecord (getAdress, amount_of_string, rec);
-
     // --------------
 
     // second (my) sort:
-
     pointerGetStr (copy_mem_start, getAdress, filesize);
     my_sort (getAdress, amount_of_string, sizeof (char *), comp);
     fileRecord (getAdress, amount_of_string, rec);
-
     // --------------
 
     // original text:
     fputs (mem_start, rec);
+    // --------------
 
     free (mem_start);
     free (copy_mem_start);
@@ -273,3 +251,15 @@ unsigned int amountOfString (char * mem) {
 
     return amount;
 }
+
+
+
+/*
+
+    int arr [5] = {13, 3, 5, 1, -3};
+    my_sort (arr, 5, sizeof (int), test_comp);
+
+    for (int i = 0; i < 5; i++)
+        printf ("%d ", arr[i]);
+
+*/
