@@ -8,7 +8,7 @@
 // функция swap в bubble_sort; static swap ();
 
 
-#define CHECK_ERROR (condition, message_error, error_code) \
+#define CHECK_ERROR(condition, message_error, error_code) \
             do { \
                if (condition) { \
                    printf ("%s", message_error); \
@@ -69,7 +69,7 @@ int main (void) {
     // memory allocation: pointers for copy start memory;
     char ** getAdress = (char ** )calloc (amount_of_string, sizeof (char * ));
     CHECK_ERROR (getAdress == NULL, "Memory not allocated.", MEMORY_NOT_FOUND);
-    copyBuf (mem_start, copy_mem_start); // !TODO: переместить указатели в отдельные функции
+    recordInBuffer (mem_start, copy_mem_start); // !TODO: переместить указатели в отдельные функции
     // --------------
 
     // first sort:
