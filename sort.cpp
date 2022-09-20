@@ -6,15 +6,13 @@
 #include <cstdint>
 
 
-// функция swap в bubble_sort; static swap ();
-
-
+//#define SWAP(save, a, b) save tmp = a; a = b; b = tmp;
 #define CHECK_ERROR(condition, message_error, error_code) \
-            do { \
-               if (condition) { \
-                   printf ("%s", message_error); \
-                   return error_code; \
-               } \
+            do {                                          \
+               if (condition) {                           \
+                   printf ("%s", message_error);          \
+                   return error_code;                     \
+               }                                          \
             } while(false)
 
 
@@ -118,6 +116,8 @@ void my_sort (void * base, size_t num, size_t size, int (*compare) (const void *
             prev = (uint8_t * ) (temp + (j - 1) * size);  
             if ((*compare) (prev, cur) > 0) {
 
+                //SWAP (uint8_t, prev, cur);
+                
                 memcpy (save, prev, size);
                 memcpy (prev,  cur, size);
                 memcpy (cur,  save, size);
