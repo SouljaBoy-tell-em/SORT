@@ -107,7 +107,7 @@ void my_sort (void * base, size_t num, size_t size, int (*compare) (const void *
     int i = 0, j = 0;
     uint8_t * save = (uint8_t * ) calloc (1, size), * cur = NULL, * prev = NULL;
     uint8_t * temp = (uint8_t * ) base;
-    // !TODO: привести void * к char *
+
     for (i = 0; i < num; i++) {
 
         for (j = num - 1; j > i; j--) {
