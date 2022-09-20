@@ -14,7 +14,7 @@
                    printf ("%s", message_error); \
                    return error_code; \
                } \
-            } while(0)
+            } while(false)
 
 
 enum error_code {
@@ -253,10 +253,9 @@ unsigned long FileSize (FILE * file, struct stat * buf) {
 
 unsigned int amountOfString (char * mem) {
 
-    unsigned long i = 0, amount = 0;
-
-    for (i = 0; i < strlen (mem); i++)
-        if (*(mem + i) == '\n')
+    unsigned long indexFile = 0, amount = 0, length = strlen (mem);
+    for (indexFile = 0; indexFile < length; indexFile++)
+        if (*(mem + indexFile) == '\n')
             amount++;
 
     return amount;
