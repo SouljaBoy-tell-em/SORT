@@ -7,6 +7,7 @@
 
 
 #define SWAP(type, a, b) type tmp = a; a = b; b = tmp;
+#define MAINEND(status) status >=1 ? 1 : -1
 #define CHECK_ERROR(condition, message_error, error_code) \
             do {                                          \
                if (condition) {                           \
@@ -25,9 +26,10 @@ enum error_code {
 };
 
 
-void openStatus (FILE * file);
+
+
+unsigned int turnOnPointers (char ** mem_start, char ** copy_mem_start, unsigned long filesize, FILE * file);
 unsigned long FileSize (FILE * file, struct stat * buf);
-void statusMemory (char * mem);
 unsigned int amountOfString (char * mem);
 int mycomp (const void * aptr, const void * bptr);
 void recordInBuffer (const char * mem_start, char * buffer);
@@ -50,26 +52,15 @@ int main (void) {
     CHECK_ERROR (rec == NULL, "Problem with opening file.", FILE_AREN_T_OPENING);
     // --------------
 
-    // memory allocation: start memory;
     unsigned long filesize = FileSize (file, &buf);
     CHECK_ERROR (filesize == 0, "File is empty.", EMPTY_FILE);
-    char * mem_start = (char * ) calloc (filesize, sizeof (char));
-    CHECK_ERROR (mem_start == NULL, "Memory not allocated.", MEMORY_NOT_FOUND);
-    // --------------
-
-    // memory allocation: copy start memory;
-    char * copy_mem_start = (char * ) calloc (filesize, sizeof (char));
-    CHECK_ERROR (copy_mem_start == NULL, "Memory not allocated.", MEMORY_NOT_FOUND);
-    // --------------
-
+    char * mem_start = NULL, * copy_mem_start = NULL, ** getAdress = NULL;
+    turnOnPointers (&mem_start, &copy_mem_start, filesize, file);
     fread (mem_start, sizeof (char), filesize, file);
-    unsigned long amount_of_string = amountOfString (mem_start);
-
-    // memory allocation: pointers for copy start memory;
-    char ** getAdress = (char ** )calloc (amount_of_string, sizeof (char * ));
+    recordInBuffer (mem_start, copy_mem_start);
+    getAdress = (char ** )calloc (amountOfString (mem_start), sizeof (char * ));
     CHECK_ERROR (getAdress == NULL, "Memory not allocated.", MEMORY_NOT_FOUND);
-    recordInBuffer (mem_start, copy_mem_start); // !TODO: переместить указатели в отдельные функции
-    // --------------
+    unsigned long amount_of_string = amountOfString (mem_start);
 
     // first sort:
     pointerGetStr (copy_mem_start, getAdress, filesize);
@@ -89,6 +80,17 @@ int main (void) {
 
     close (file, rec, mem_start, copy_mem_start, getAdress);
     return 0;
+}
+
+
+unsigned int turnOnPointers (char ** mem_start, char ** copy_mem_start, unsigned long filesize, FILE * file) {
+
+    *mem_start = (char * ) calloc (filesize, sizeof (char));
+    CHECK_ERROR (*mem_start == NULL, "Memory not allocated.", MEMORY_NOT_FOUND);
+    *copy_mem_start = (char * ) calloc (filesize, sizeof (char));
+    CHECK_ERROR (*copy_mem_start == NULL, "Memory not allocated.", MEMORY_NOT_FOUND);
+
+    return NO_ERROR;
 }
 
 
@@ -234,16 +236,6 @@ int comp (const void * aptr, const void * bptr)
     }
 
     return (str1[indexStr1] - str2[indexStr2]);
-}
-
-
-void statusMemory (char * mem) {
-
-    if (mem == NULL) {
-
-        puts ("You have problem with getting memory");
-        exit (EXIT_FAILURE);
-    }
 }
 
 
