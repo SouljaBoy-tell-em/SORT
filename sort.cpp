@@ -6,7 +6,7 @@
 #include <cstdint>
 
 
-//#define SWAP(save, a, b) save tmp = a; a = b; b = tmp;
+#define SWAP(type, a, b) type tmp = a; a = b; b = tmp;
 #define CHECK_ERROR(condition, message_error, error_code) \
             do {                                          \
                if (condition) {                           \
@@ -105,8 +105,9 @@ void close (FILE * file, FILE * rec, char * mem_start, char * copy_mem_start, ch
 void my_sort (void * base, size_t num, size_t size, int (*compare) (const void * obj1, const void * obj2)) {
 
     int i = 0, j = 0;
-    uint8_t * save = (uint8_t * ) calloc (1, size), * cur = NULL, * prev = NULL;
-    uint8_t * temp = (uint8_t * ) base;
+    
+    // uint8_t * save = (uint8_t * ) calloc (1, size);
+    uint8_t * temp = (uint8_t * ) base, * cur = NULL, * prev = NULL;
 
     for (i = 0; i < num; i++) {
 
@@ -116,11 +117,13 @@ void my_sort (void * base, size_t num, size_t size, int (*compare) (const void *
             prev = (uint8_t * ) (temp + (j - 1) * size);  
             if ((*compare) (prev, cur) > 0) {
 
-                //SWAP (uint8_t, prev, cur);
+                SWAP (uint8_t *, prev, cur);
                 
+                /*
                 memcpy (save, prev, size);
                 memcpy (prev,  cur, size);
                 memcpy (cur,  save, size);
+                */
             }
 
 
@@ -128,7 +131,7 @@ void my_sort (void * base, size_t num, size_t size, int (*compare) (const void *
         }
     }
 
-    free (save);
+    // free (save);
 }
 
 
