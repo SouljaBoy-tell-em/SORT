@@ -3,17 +3,35 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <assert.h>
 
-//fseek () & ftell()
+
 // функция swap в bubble_sort; static swap ();
+
+
+#define CHECK_ERROR (condition, message_error, error_code) \
+            do { \
+               if (condition) { \
+                   printf ("%s", message_error); \
+                   return error_code; \
+               } \
+            } while(0)
+
+
+enum error_code {
+
+    NO_ERROR,
+    FILE_AREN_T_OPENING,
+    MEMORY_NOT_FOUND,
+    EMPTY_FILE
+};
+
 
 void openStatus (FILE * file);
 unsigned long FileSize (FILE * file, struct stat * buf);
 void statusMemory (char * mem);
 unsigned int amountOfString (char * mem);
 int mycomp (const void * aptr, const void * bptr);
-void copyBuf (const char * mem_start, char * buffer);
+void recordInBuffer (const char * mem_start, char * buffer);
 void pointerGetStr (char * buffer, char ** getAdress, unsigned long filesize);
 void fileRecord (char ** getAdress, unsigned long amount_of_string, FILE * rec);
 int comp (const void * aptr, const void * bptr);
@@ -28,20 +46,21 @@ int main (void) {
 
     // OPENING FILES:
     FILE * file = fopen ("sort.txt", "rb");
-    //openStatus (file); // !TODO: переместить в define
+    CHECK_ERROR (file == NULL, "Problem with opening file.", FILE_AREN_T_OPENING);
     FILE * rec = fopen ("aftersort.txt", "a");
-    //openStatus (rec);
+    CHECK_ERROR (rec == NULL, "Problem with opening file.", FILE_AREN_T_OPENING);
     // --------------
 
     // memory allocation: start memory;
     unsigned long filesize = FileSize (file, &buf);
+    CHECK_ERROR (filesize == 0, "File is empty.", EMPTY_FILE);
     char * mem_start = (char * ) calloc (filesize, sizeof (char));
-    statusMemory (mem_start); //!TODO: переместить в define
+    CHECK_ERROR (mem_start == NULL, "Memory not allocated.", MEMORY_NOT_FOUND);
     // --------------
 
     // memory allocation: copy start memory;
     char * copy_mem_start = (char * ) calloc (filesize, sizeof (char));
-    statusMemory (copy_mem_start);
+    CHECK_ERROR (copy_mem_start == NULL, "Memory not allocated.", MEMORY_NOT_FOUND);
     // --------------
 
     fread (mem_start, sizeof (char), filesize, file);
@@ -49,16 +68,17 @@ int main (void) {
 
     // memory allocation: pointers for copy start memory;
     char ** getAdress = (char ** )calloc (amount_of_string, sizeof (char * ));
+    CHECK_ERROR (getAdress == NULL, "Memory not allocated.", MEMORY_NOT_FOUND);
     copyBuf (mem_start, copy_mem_start); // !TODO: переместить указатели в отдельные функции
     // --------------
 
-    // first sort: 
+    // first sort:
     pointerGetStr (copy_mem_start, getAdress, filesize);
     qsort (getAdress, amount_of_string, sizeof (char *), comp);
     fileRecord (getAdress, amount_of_string, rec);
     // --------------
 
-    // second (my) sort: 
+    // second (my) sort:
     pointerGetStr (copy_mem_start, getAdress, filesize);
     my_sort (getAdress, amount_of_string, sizeof (char *), comp);
     fileRecord (getAdress, amount_of_string, rec);
@@ -140,8 +160,6 @@ void fileRecord (char ** getAdress, unsigned long amount_of_string, FILE * rec) 
 
 void pointerGetStr (char * buffer, char ** getAdress, unsigned long filesize) {
 
-    assert (getAdress); // !TODO: заменить на define
-
     unsigned long i = 0, j = 0;
     bool flag = false;
 
@@ -164,10 +182,10 @@ void pointerGetStr (char * buffer, char ** getAdress, unsigned long filesize) {
 }
 
 
-void copyBuf (const char * mem_start, char * buffer) { // !TODO: переименовать функцию
+void recordInBuffer (const char * mem_start, char * buffer) {
 
-    int amo = strlen (mem_start);
-    for (int i = 0; i < amo; i++) {
+    int amount_of_symbols = strlen (mem_start);
+    for (int i = 0; i < amount_of_symbols; i++) {
 
         if (mem_start[i] == EOF)
             buffer[i] = '\0';
@@ -224,13 +242,12 @@ void statusMemory (char * mem) {
 }
 
 
-unsigned long FileSize (FILE * file, struct stat * buf) { // const char * st;
-                                                         // char const*
-                                                         //const char const* st
+unsigned long FileSize (FILE * file, struct stat * buf) {
 
-    fstat (fileno (file), buf); // !TODO: обработать fstat
+    if (fstat (fileno (file), buf) == 0)
+        return buf->st_size;
 
-    return buf->st_size;
+    return 0;
 }
 
 
