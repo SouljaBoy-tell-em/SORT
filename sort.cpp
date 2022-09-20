@@ -7,7 +7,7 @@
 
 
 #define SWAP(type, a, b) type tmp = a; a = b; b = tmp;
-#define MAINEND(status) status >=1 ? 1 : -1
+#define MAINEND(status) status >=1 return 1
 #define CHECK_ERROR(condition, message_error, error_code) \
             do {                                          \
                if (condition) {                           \
