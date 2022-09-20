@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <cstdint>
 
 
 // функция swap в bubble_sort; static swap ();
@@ -106,19 +107,20 @@ void close (FILE * file, FILE * rec, char * mem_start, char * copy_mem_start, ch
 void my_sort (void * base, size_t num, size_t size, int (*compare) (const void * obj1, const void * obj2)) {
 
     int i = 0, j = 0;
-    void * save = (void * ) calloc (1, size);
+    uint8_t * save = (uint8_t * ) calloc (1, size), * cur = NULL, * prev = NULL;
+    uint8_t * temp = (uint8_t * ) base;
     // !TODO: привести void * к char *
     for (i = 0; i < num; i++) {
 
         for (j = num - 1; j > i; j--) {
 
-            //printf ("A: %p B: %p\n", base + (j - 1) * size, base + j * size);
+            cur = (uint8_t * ) (temp + j * size);
+            prev = (uint8_t * ) (temp + (j - 1) * size);  
+            if ((*compare) (prev, cur) > 0) {
 
-            if ((*compare) (base + (j - 1) * size, base + j * size) > 0) {
-
-                memcpy (save                 , base + (j - 1) * size,       size);
-                memcpy (base + (j - 1) * size, base + j * size      ,       size);
-                memcpy (base + j * size      , save                 ,       size);
+                memcpy (save, prev, size);
+                memcpy (prev,  cur, size);
+                memcpy (cur,  save, size);
             }
 
 
