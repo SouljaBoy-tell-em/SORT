@@ -28,7 +28,8 @@ enum error_code {
 
 
 
-unsigned int turnOnPointers (char ** mem_start, char ** copy_mem_start, char *** getAdress, unsigned long filesize, FILE * file);
+unsigned int turnOnPointers (char ** mem_start, char ** copy_mem_start, char *** getAdress, unsigned long filesize,\
+                            unsigned long * amount_of_string, FILE * file);
 unsigned long FileSize (FILE * file, struct stat * buf);
 unsigned int amountOfString (char * mem);
 int mycomp (const void * aptr, const void * bptr);
@@ -52,11 +53,10 @@ int main (void) {
     CHECK_ERROR (rec == NULL, "Problem with opening file.", FILE_AREN_T_OPENING);
     // --------------
 
-    unsigned long filesize = FileSize (file, &buf);
+    unsigned long filesize = FileSize (file, &buf), amount_of_string = 0;
     CHECK_ERROR (filesize == 0, "File is empty.", EMPTY_FILE);
     char * mem_start = NULL, * copy_mem_start = NULL, ** getAdress = NULL;
-    turnOnPointers (&mem_start, &copy_mem_start, &getAdress, filesize, file);
-    unsigned long amount_of_string = amountOfString (mem_start);
+    turnOnPointers (&mem_start, &copy_mem_start, &getAdress, filesize, &amount_of_string, file);
 
     // first sort:
     pointerGetStr (copy_mem_start, getAdress, filesize);
@@ -79,7 +79,8 @@ int main (void) {
 }
 
 
-unsigned int turnOnPointers (char ** mem_start, char ** copy_mem_start, char *** getAdress, unsigned long filesize, FILE * file) {
+unsigned int turnOnPointers (char ** mem_start, char ** copy_mem_start, char *** getAdress, unsigned long filesize,\
+                            unsigned long * amount_of_string, FILE * file) {
 
     * mem_start = (char * ) calloc (filesize, sizeof (char));
     CHECK_ERROR (* mem_start == NULL, "Memory not allocated.", MEMORY_NOT_FOUND);
@@ -87,7 +88,8 @@ unsigned int turnOnPointers (char ** mem_start, char ** copy_mem_start, char ***
     CHECK_ERROR (* copy_mem_start == NULL, "Memory not allocated.", MEMORY_NOT_FOUND);
     fread (* mem_start, sizeof (char), filesize, file);
     recordInBuffer (* mem_start, * copy_mem_start);
-    * getAdress = (char ** )calloc (amountOfString (* mem_start), sizeof (char * ));
+    * amount_of_string = amountOfString (* mem_start);
+    * getAdress = (char ** )calloc (* amount_of_string, sizeof (char * ));
     CHECK_ERROR (getAdress == NULL, "Memory not allocated.", MEMORY_NOT_FOUND);
 
     return NO_ERROR;
