@@ -11,7 +11,7 @@
 
 
 #define SWAP(type, a, b) type tmp = a; a = b; b = tmp;
-#define MAINEND(status) status >=1 return 1
+#define MAINEND(status) status >=1 return 1;
 #define CHECK_ERROR(condition, message_error, error_code) \
             do {                                          \
                if (condition) {                           \
@@ -37,6 +37,7 @@ unsigned long FileSize (FILE * file, struct stat * buf);
 void fileRecord (char ** getAdress, unsigned long amount_of_string, FILE * rec);
 int comp (const void * aptr, const void * bptr);
 void my_sort (void * base, size_t num, size_t size, int (*compare) (const void * obj1, const void * obj2));
+bool openFiles (FILE ** file, FILE ** rec);
 void pointerGetStr (char * buffer, char ** getAdress, unsigned long filesize);
 void recordInBuffer (const char * mem_start, char * buffer);
 unsigned int turnOnPointers (char ** mem_start, char ** copy_mem_start, char *** getAdress, unsigned long filesize,\
