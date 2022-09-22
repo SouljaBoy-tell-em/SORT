@@ -100,6 +100,17 @@ void my_sort (void * base, size_t num, size_t size, int (*compare) (const void *
 }
 
 
+bool openFiles (FILE ** file, FILE ** rec) {
+
+
+
+    * file = fopen ("sort.txt", "rb");
+    CHECK_ERROR (file == NULL, "Problem with opening file.", FILE_AREN_T_OPENING);
+    * rec = fopen ("aftersort.txt", "a");
+    CHECK_ERROR (rec == NULL, "Problem with opening file.", FILE_AREN_T_OPENING);
+
+    return NO_ERROR;
+}
 
 void pointerGetStr (char * buffer, char ** getAdress, unsigned long filesize) {
 
