@@ -6,11 +6,10 @@ int main (void) {
 
     struct stat buf = {};
 
-    // OPENING FILEpS:
-    FILE * file = fopen ("sort.txt", "rb");
-    CHECK_ERROR (file == NULL, "Problem with opening file.", FILE_AREN_T_OPENING);
-    FILE * rec = fopen ("aftersort.txt", "a");
-    CHECK_ERROR (rec == NULL, "Problem with opening file.", FILE_AREN_T_OPENING);
+    // OPENING FILES:
+    FILE * file = NULL, * rec = NULL;
+    bool opening = openFiles (&file, &rec);
+    CHECK_ERROR (opening == 1, "File didn't open.", FILE_AREN_T_OPENING);
     // --------------
 
     unsigned long filesize = FileSize (file, &buf), amount_of_string = 0;
