@@ -34,7 +34,7 @@ int main (void) {
     // --------------
 
     // original text:
-    fputs (mem_start, rec);
+    fwrite (mem_start, sizeof (char), filesize, rec);
     // --------------
 
     close (file, rec, mem_start, copy_mem_start, getAdress);
