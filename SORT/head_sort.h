@@ -13,8 +13,14 @@
 #include <cstdint>
 
 
-#define SWAP(type, a, b) type tmp = a; a = b; b = tmp;
+#define SWAP(save, prev, cur) memcpy (save, prev, size);\
+                              memcpy (prev,  cur, size);\
+                              memcpy (cur,  save, size);
+
+
 #define MAINEND(status) status >=1 return 1;
+
+
 #define CHECK_ERROR(condition, message_error, error_code) \
             do {                                          \
                if (condition) {                           \
