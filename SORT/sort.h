@@ -74,9 +74,8 @@ void fileRecord (char ** getAdress, unsigned long amount_of_string, FILE * rec) 
 void my_sort (void * base, size_t num, size_t size, int (*compare) (const void * obj1, const void * obj2)) {
 
     int i = 0, j = 0;
-    
-    // uint8_t * save = (uint8_t * ) calloc (1, size);
-    uint8_t * temp = (uint8_t * ) base, * cur = NULL, * prev = NULL;
+    uint8_t * temp = (uint8_t * ) base, * cur = NULL, * prev = NULL, * save = NULL;
+    save = (uint8_t * ) calloc (1, size);
 
     for (i = 0; i < num; i++) {
 
@@ -86,7 +85,7 @@ void my_sort (void * base, size_t num, size_t size, int (*compare) (const void *
             prev = (uint8_t * ) (temp + (j - 1) * size);  
             if ((*compare) (prev, cur) > 0) {
 
-                SWAP (uint8_t *, prev, cur);
+                SWAP (save, prev, cur);
                 
                 /*
                 memcpy (save, prev, size);
@@ -108,9 +107,9 @@ bool openFiles (FILE ** file, FILE ** rec) {
 
 
 
-    * file = fopen ("sort.txt", "rb");
+    * file = fopen ("sort.txt", "r");
     CHECK_ERROR (file == NULL, "Problem with opening file.", FILE_AREN_T_OPENING);
-    * rec = fopen ("aftersort.txt", "a");
+    * rec = fopen ("aftersort.txt", "w");
     CHECK_ERROR (rec == NULL, "Problem with opening file.", FILE_AREN_T_OPENING);
 
     return NO_ERROR;
