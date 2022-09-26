@@ -2,21 +2,20 @@
 ///\brief This file contains function for sorting string in file;
 
 
-unsigned int amountOfString (char * mem) {
+unsigned int amountOfString (char * mem, unsigned long filesize) {
 
-    unsigned long indexFile = 0, amount = 0, length = strlen (mem);
-    for (indexFile = 0; indexFile < length; indexFile++)
-        if (*(mem + indexFile) == '\n')
+    unsigned long indexFile = 0, amount = 0;
+    for (indexFile = 0; indexFile < filesize; indexFile++)
+        if (*(mem + indexFile) == '\0')
             amount++;
 
     return amount;
 }
 
 
-void close (FILE * file, FILE * rec, char * mem_start, char * copy_mem_start, char ** getAdress) {
+void close (FILE * file, FILE * rec, char * mem_start, char ** getAdress) {
 
     free (mem_start);
-    free (copy_mem_start);
     free (getAdress);
     fclose (file);
     fclose (rec);
@@ -52,10 +51,11 @@ int comp (const void * aptr, const void * bptr) {
 }
 
 
-unsigned long FileSize (FILE * file, struct stat * buf) {
+unsigned long FileSize (FILE * file) {
 
-    if (fstat (fileno (file), buf) == 0)
-        return buf->st_size;
+    struct stat buf = {};
+    if (fstat (fileno (file), &buf) == 0)
+        return buf.st_size;
 
     return 0;
 }
@@ -74,46 +74,21 @@ void fileRecord (char ** getAdress, unsigned long amount_of_string, FILE * rec) 
 void my_sort (void * base, size_t num, size_t size, int (*compare) (const void * obj1, const void * obj2)) {
 
     int i = 0, j = 0;
-    uint8_t * temp = (uint8_t * ) base, * cur = NULL, * prev = NULL, * save = NULL;
-    save = (uint8_t * ) calloc (1, size);
+    uint8_t * temp = (uint8_t * ) base;
 
     for (i = 0; i < num; i++) {
 
         for (j = num - 1; j > i; j--) {
 
-            cur = (uint8_t * ) (temp + j * size);
-            prev = (uint8_t * ) (temp + (j - 1) * size);  
-            if ((*compare) (prev, cur) > 0) {
-
-                SWAP (save, prev, cur);
-                
-                /*
-                memcpy (save, prev, size);
-                memcpy (prev,  cur, size);
-                memcpy (cur,  save, size);
-                */
-            }
-
-
-
+            uint8_t * cur =        (uint8_t * ) (temp + j * size);
+            uint8_t * prev = (uint8_t * ) (temp + (j - 1) * size);  
+            if ((*compare) (prev, cur) > 0)
+                swap (size, prev, cur);
         }
     }
 
-    // free (save);
 }
 
-
-bool openFiles (FILE ** file, FILE ** rec) {
-
-
-
-    * file = fopen ("sort.txt", "r");
-    CHECK_ERROR (file == NULL, "Problem with opening file.", FILE_AREN_T_OPENING);
-    * rec = fopen ("aftersort.txt", "w");
-    CHECK_ERROR (rec == NULL, "Problem with opening file.", FILE_AREN_T_OPENING);
-
-    return NO_ERROR;
-}
 
 void pointerGetStr (char * buffer, char ** getAdress, unsigned long filesize) {
 
@@ -139,38 +114,53 @@ void pointerGetStr (char * buffer, char ** getAdress, unsigned long filesize) {
 }
 
 
-void recordInBuffer (const char * mem_start, char * buffer) {
+void recordInBuffer (char * mem_start) {
 
     int amount_of_symbols = strlen (mem_start);
     for (int i = 0; i < amount_of_symbols; i++) {
 
         if (mem_start[i] == EOF)
-            buffer[i] = '\0';
+            mem_start[i] = '\0';
 
         if (mem_start [i] == '\n') {
 
-            buffer[i] = '\0';
+            mem_start[i] = '\0';
             continue;
         }
-
-        buffer [i] = mem_start [i];
     }
 
 }
 
 
-unsigned int turnOnPointers (char ** mem_start, char ** copy_mem_start, char *** getAdress, unsigned long filesize,\
-                            unsigned long * amount_of_string, FILE * file) {
+void swap (size_t size, uint8_t * cur, uint8_t * prev) {
+
+    int i = 0;
+    for (i = 0; i < size; i += 8) {
+        
+        uint64_t temp = * (uint64_t * )(cur + i);
+        * (uint64_t * )(cur + i) =  * (uint64_t * )(prev + i);
+        * (uint64_t * )(prev + i) = temp;
+    }
+    
+    for (i; i < size; i++) {
+        
+        uint8_t temp = * (cur + i);
+        * (cur + i) =  * (prev + i);
+        * (prev + i) = temp;
+    }
+}
+
+
+unsigned int turnOnPointers (char ** mem_start, char *** getAdress, unsigned long filesize,\
+                            unsigned long * amount_of_string, FILE * file) { // !TODO: принять буфер, подсчитать кол-во строк, создать буфер указателей, переписать строки в массив указателей и возвращать буфер.
 
     * mem_start = (char * ) calloc (filesize, sizeof (char));
-    CHECK_ERROR (* mem_start == NULL, "Memory not allocated.", MEMORY_NOT_FOUND);
-    * copy_mem_start = (char * ) calloc (filesize, sizeof (char));
-    CHECK_ERROR (* copy_mem_start == NULL, "Memory not allocated.", MEMORY_NOT_FOUND);
+    CHECK_ERROR (* mem_start == NULL, "Memory not allocated for mem_start.", MEMORY_NOT_FOUND);
     fread (* mem_start, sizeof (char), filesize, file);
-    recordInBuffer (* mem_start, * copy_mem_start);
-    * amount_of_string = amountOfString (* mem_start);
+    recordInBuffer (* mem_start);
+    * amount_of_string = amountOfString (* mem_start, filesize);
     * getAdress = (char ** )calloc (* amount_of_string, sizeof (char * ));
-    CHECK_ERROR (getAdress == NULL, "Memory not allocated.", MEMORY_NOT_FOUND);
+    CHECK_ERROR (getAdress == NULL, "Memory not allocated for getAdress.", MEMORY_NOT_FOUND);
 
     return NO_ERROR;
 }
