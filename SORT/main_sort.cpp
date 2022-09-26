@@ -14,13 +14,15 @@ int main (void) {
     FILE * rec = fopen ("aftersort.txt", "w");
     CHECK_ERROR (rec == NULL, "Problem with opening aftersort.txt", FILE_AREN_T_OPENING);
     // --------------
+
     unsigned long filesize = FileSize (file), amount_of_string = 0;
     CHECK_ERROR (filesize == 0, "File is empty.", EMPTY_FILE);
     char * mem_start = NULL, ** getAdress = NULL;
-    turnOnPointers (&mem_start, &getAdress, filesize, &amount_of_string, file);
+
+    MAIN_DET (getBuffer (&mem_start, filesize, &amount_of_string, file));
+    MAIN_DET (InitializePointersArray (&getAdress, mem_start, filesize, amount_of_string));
     
     // first sort:
-    pointerGetStr (mem_start, getAdress, filesize);
     qsort (getAdress, amount_of_string, sizeof (char *), comp);
     fileRecord (getAdress, amount_of_string, rec);
     // --------------
