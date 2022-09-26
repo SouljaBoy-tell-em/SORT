@@ -32,8 +32,7 @@ int main (void) {
     // --------------
 
     // original text:
-    for (int i = 0; i < filesize; i++)
-        fputc ((mem_start [i] ? mem_start [i] : '\n'), rec);
+    originalText (filesize, mem_start, rec);
     // --------------
     
     close (file, rec, mem_start, getAdress);
