@@ -90,6 +90,13 @@ void my_sort (void * base, size_t num, size_t size, int (*compare) (const void *
 }
 
 
+void originalText (unsigned long filesize, char * mem_start, FILE * rec) {
+
+    for (int i = 0; i < filesize; i++)
+        fputc ((mem_start [i] ? mem_start [i] : '\n'), rec);
+}
+
+
 void pointerGetStr (char * buffer, char ** getAdress, unsigned long filesize) {
 
     unsigned long i = 0, j = 0;
