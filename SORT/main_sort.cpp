@@ -8,35 +8,35 @@
 
 int main (void) {
 
-    struct stat buf = {};
-
     // OPENING FILES:
-    FILE * file = NULL, * rec = NULL;
-    bool opening = openFiles (&file, &rec);
-    CHECK_ERROR (opening == 1, "File didn't open.", FILE_AREN_T_OPENING);
+    FILE * file = fopen ("sort.txt", "r");
+    CHECK_ERROR (file == NULL, "Problem with opening sort.txt", FILE_AREN_T_OPENING);
+    FILE * rec = fopen ("aftersort.txt", "w");
+    CHECK_ERROR (rec == NULL, "Problem with opening aftersort.txt", FILE_AREN_T_OPENING);
     // --------------
-
-    unsigned long filesize = FileSize (file, &buf), amount_of_string = 0;
+    unsigned long filesize = FileSize (file), amount_of_string = 0;
     CHECK_ERROR (filesize == 0, "File is empty.", EMPTY_FILE);
-    char * mem_start = NULL, * copy_mem_start = NULL, ** getAdress = NULL;
-    turnOnPointers (&mem_start, &copy_mem_start, &getAdress, filesize, &amount_of_string, file);
-
+    char * mem_start = NULL, ** getAdress = NULL;
+    turnOnPointers (&mem_start, &getAdress, filesize, &amount_of_string, file);
+    
     // first sort:
-    pointerGetStr (copy_mem_start, getAdress, filesize);
+    pointerGetStr (mem_start, getAdress, filesize);
     qsort (getAdress, amount_of_string, sizeof (char *), comp);
     fileRecord (getAdress, amount_of_string, rec);
     // --------------
 
     // second (my) sort:
-    pointerGetStr (copy_mem_start, getAdress, filesize);
+    /* pointerGetStr (mem_start, getAdress, filesize); 
     my_sort (getAdress, amount_of_string, sizeof (char *), comp);
-    fileRecord (getAdress, amount_of_string, rec);
+    fileRecord (getAdress, amount_of_string, rec); */
     // --------------
 
     // original text:
-    fwrite (mem_start, sizeof (char), filesize, rec);
+    for (int i = 0; i < filesize; i++)
+        fputc ((mem_start [i] ? mem_start [i] : '\n'), rec);
     // --------------
-
-    close (file, rec, mem_start, copy_mem_start, getAdress);
+    
+    close (file, rec, mem_start, getAdress);
+    
     return 0;
 }
