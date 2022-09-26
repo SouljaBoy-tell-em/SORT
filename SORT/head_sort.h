@@ -13,6 +13,9 @@
 #include <cstdint>
 
 
+#define MAIN_DET(detector) if (detector) {                \
+                            exit (EXIT_FAILURE);          \
+                            }
 #define CHECK_ERROR(condition, message_error, error_code) \
             do {                                          \
                if (condition) {                           \
@@ -66,6 +69,26 @@ unsigned long FileSize (FILE * file);
 void fileRecord (char ** getAdress, unsigned long amount_of_string, FILE * rec);
 
 
+//! This function allocates memory for pointers;
+//! @param [in] mem_start - pointer of the pointer elementary memory;
+//! @param [in] getAdress - pointer of the pointer array strings;
+//! @param [in] filesize - size of the file;
+//! @param [in] amount_of_string - pointer of the value, which saves amount of strings;
+//! @param [in] file - pointer of the openable file;
+//! @return 0, if no errors weren't found and >=1, if errors were found.
+unsigned int getBuffer (char ** mem_start, char *** getAdress, unsigned long filesize,\
+                             unsigned long * amount_of_string, FILE * file);
+
+
+//! This function initializes array of pointers;
+//! @param [in] getAdress - pointer of the pointer array strings;
+//! @param [in] mem_start - pointer of the pointer elementary memory;
+//! @param [in] filesize - size of the file;
+//! @param [in] amount_of_string - pointer of the value, which saves amount of strings;
+//! @return 0, if no errors weren't found and >=1, if errors were found.
+unsigned int InitializePointersArray (char *** getAdress, char * mem_start, unsigned long filesize,\
+                              unsigned long amount_of_string);
+
 //! This function sorting some array (my function qsort ());
 //! @param [in] base - pointer of the buffer/array.
 //! @param [in] num - amount of the elements;
@@ -108,15 +131,5 @@ void recordInBuffer (char * mem_start);
 //! @param [in] prev - pointer of previous element.
 void swap (size_t size, uint8_t * cur, uint8_t * prev);
 
-
-//! This function allocates memory for pointers;
-//! @param [in] mem_start - pointer of the pointer elementary memory;
-//! @param [in] getAdress - pointer of the pointer array strings;
-//! @param [in] filesize - size of the file;
-//! @param [in] amount_of_string - pointer of the value, which saves amount of strings;
-//! @param [in] file - pointer of the openable file;
-//! @return 0, if no errors weren't found and >=1, if errors were found.
-unsigned int turnOnPointers (char ** mem_start, char *** getAdress, unsigned long filesize,\
-                             unsigned long * amount_of_string, FILE * file);
 
 #endif
