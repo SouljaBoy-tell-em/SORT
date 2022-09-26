@@ -71,6 +71,30 @@ void fileRecord (char ** getAdress, unsigned long amount_of_string, FILE * rec) 
 }
 
 
+unsigned int getBuffer (char ** mem_start, unsigned long filesize,\
+                            unsigned long * amount_of_string, FILE * file) {
+
+    * mem_start = (char * ) calloc (filesize, sizeof (char));
+    CHECK_ERROR (* mem_start == NULL, "Memory not allocated for mem_start.", MEMORY_NOT_FOUND);
+    fread (* mem_start, sizeof (char), filesize, file);
+    recordInBuffer (* mem_start);
+    * amount_of_string = amountOfString (* mem_start, filesize);
+
+    return NO_ERROR;
+}
+
+
+unsigned int InitializePointersArray (char *** getAdress, char * mem_start, unsigned long filesize,\
+                              unsigned long amount_of_string) {
+
+    * getAdress = (char ** )calloc (amount_of_string, sizeof (char * ));
+    CHECK_ERROR (* getAdress == NULL, "Memory not allocated for getAdress.", MEMORY_NOT_FOUND);
+    pointerGetStr (mem_start, * getAdress, filesize);
+
+    return NO_ERROR;
+}
+
+
 void my_sort (void * base, size_t num, size_t size, int (*compare) (const void * obj1, const void * obj2)) {
 
     int i = 0, j = 0;
@@ -155,19 +179,4 @@ void swap (size_t size, uint8_t * cur, uint8_t * prev) {
         * (cur + i) =  * (prev + i);
         * (prev + i) = temp;
     }
-}
-
-
-unsigned int turnOnPointers (char ** mem_start, char *** getAdress, unsigned long filesize,\
-                            unsigned long * amount_of_string, FILE * file) { // !TODO: принять буфер, подсчитать кол-во строк, создать буфер указателей, переписать строки в массив указателей и возвращать буфер.
-
-    * mem_start = (char * ) calloc (filesize, sizeof (char));
-    CHECK_ERROR (* mem_start == NULL, "Memory not allocated for mem_start.", MEMORY_NOT_FOUND);
-    fread (* mem_start, sizeof (char), filesize, file);
-    recordInBuffer (* mem_start);
-    * amount_of_string = amountOfString (* mem_start, filesize);
-    * getAdress = (char ** )calloc (* amount_of_string, sizeof (char * ));
-    CHECK_ERROR (getAdress == NULL, "Memory not allocated for getAdress.", MEMORY_NOT_FOUND);
-
-    return NO_ERROR;
 }
