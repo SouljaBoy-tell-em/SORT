@@ -95,7 +95,10 @@ void pointerGetStr (char * buffer, char ** getAdress, unsigned long filesize);
 void recordInBuffer (char * mem_start);
 
 
-
+//! This function swaps elements;
+//! @param [in] size - size of array elements;
+//! @param [in] cur - pointer of current element;
+//! @param [in] prev - pointer of previous element.
 void swap (size_t size, uint8_t * cur, uint8_t * prev);
 
 
