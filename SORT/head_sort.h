@@ -13,14 +13,6 @@
 #include <cstdint>
 
 
-#define SWAP(save, prev, cur) memcpy (save, prev, size);\
-                              memcpy (prev,  cur, size);\
-                              memcpy (cur,  save, size);
-
-
-#define MAINEND(status) status >=1 return 1;
-
-
 #define CHECK_ERROR(condition, message_error, error_code) \
             do {                                          \
                if (condition) {                           \
@@ -42,16 +34,15 @@ enum error_code {
 //! This function can count amount of string; 
 //! @param [in] mem - pointer of the buffer;
 //! @return amount of strings.
-unsigned int amountOfString (char * mem);
+unsigned int amountOfString (char * mem, unsigned long filesize);
 
 
 //! This function closes files and free a memory for gotted pointers; 
 //! @param [in] file - pointer of the openable file;
 //! @param [in] rec - pointer of the recordable file;
 //! @param [in] mem_start - pointer of the elementary memory;
-//! @param [in] copy_mem_start - pointer of the copied memory;
 //! @param [in] getAdress - pointer of the array of strings.
-void close (FILE * file, FILE * rec, char * mem_start, char * copy_mem_start, char ** getAdress);
+void close (FILE * file, FILE * rec, char * mem_start, char ** getAdress);
 
 
 //! This function arranges the lines in the correct order;
@@ -65,7 +56,7 @@ int comp (const void * aptr, const void * bptr);
 //! @param [in] file - pointer of the openable file;
 //! @param [in] buf - pointer of the struct stat;
 //! @return size of the file.
-unsigned long FileSize (FILE * file, struct stat * buf);
+unsigned long FileSize (FILE * file);
 
 
 //! This function determines the file size;
@@ -101,18 +92,21 @@ void pointerGetStr (char * buffer, char ** getAdress, unsigned long filesize);
 //! This function traids symbols '\n' on '\0' and records gotted result in buffer;
 //! @param [in] mem_start - pointer of the elementary memory;
 //! @param [in] buffer - pointer of the buffer.
-void recordInBuffer (const char * mem_start, char * buffer);
+void recordInBuffer (char * mem_start);
+
+
+
+void swap (size_t size, uint8_t * cur, uint8_t * prev);
 
 
 //! This function allocates memory for pointers;
 //! @param [in] mem_start - pointer of the pointer elementary memory;
-//! @param [in] copy_mem_start - pointer of the pointer copied memory;
 //! @param [in] getAdress - pointer of the pointer array strings;
 //! @param [in] filesize - size of the file;
 //! @param [in] amount_of_string - pointer of the value, which saves amount of strings;
 //! @param [in] file - pointer of the openable file;
 //! @return 0, if no errors weren't found and >=1, if errors were found.
-unsigned int turnOnPointers (char ** mem_start, char ** copy_mem_start, char *** getAdress, unsigned long filesize,\
+unsigned int turnOnPointers (char ** mem_start, char *** getAdress, unsigned long filesize,\
                              unsigned long * amount_of_string, FILE * file);
 
 #endif
