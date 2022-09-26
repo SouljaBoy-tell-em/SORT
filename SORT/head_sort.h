@@ -82,6 +82,13 @@ void my_sort (void * base, size_t num, size_t size, int (*compare) (const void *
 bool openFiles (FILE ** file, FILE ** rec);
 
 
+//! This function prints original text;
+//! @param [in] filesize - size of the file;
+//! @param [in] mem_start - pointer of the elementary memory;
+//! @param [in] rec - pointer of the pointer recordable file.
+void originalText (unsigned long filesize, char * mem_start, FILE * rec);
+
+
 //! This function initializes buffer;
 //! @param [in] buffer - pointer of the buffer;
 //! @param [in] getAdress - pointer of the array strings;
