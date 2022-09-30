@@ -123,19 +123,10 @@ void originalText (unsigned long filesize, char * mem_start, FILE * rec) {
 
 void pointerGetStr (char * buffer, char ** getAdress, unsigned long filesize) {
 
-    unsigned long i = 0, j = 0;
-    bool flag = false;
-
+    getAdress [0] = &buffer [0];
+    
+    unsigned long i = 1, j = 1;
     for (i = 0; i < filesize; i++) {
-
-        if (flag == false) {
-
-            getAdress [j] = &buffer [i];
-            flag = true;
-            j++;
-            continue;
-        }
-
         if (buffer[i] == '\0') {
 
             getAdress [j] = &buffer [i+1];
