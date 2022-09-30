@@ -28,9 +28,9 @@ int main (void) {
     // --------------
 
     // second (my) sort:
-    /* pointerGetStr (mem_start, getAdress, filesize); 
+    // pointerGetStr (mem_start, getAdress, filesize); 
     my_sort (getAdress, amount_of_string, sizeof (char *), comp);
-    fileRecord (getAdress, amount_of_string, rec); */
+    fileRecord (getAdress, amount_of_string, rec); 
     // --------------
 
     // original text:
