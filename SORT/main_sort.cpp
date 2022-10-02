@@ -1,5 +1,5 @@
-///\file
-///\brief This file can show a program (main);
+//\file
+///\/brief This file can show a program (main);
 
 
 #include "head_sort.h"
@@ -23,18 +23,20 @@ int main (void) {
     MAIN_DET (InitializePointersArray (&getAdress, mem_start, filesize, amount_of_string));
     
     // first sort:
-    qsort (getAdress, amount_of_string, sizeof (char *), comp);
-    fileRecord (getAdress, amount_of_string, rec);
+    //qsort (getAdress, amount_of_string, sizeof (char *), comp);
+    //fileRecord (getAdress, amount_of_string, rec);
     // --------------
 
     // second (my) sort:
-    // pointerGetStr (mem_start, getAdress, filesize); 
-    my_sort (getAdress, amount_of_string, sizeof (char *), comp);
-    fileRecord (getAdress, amount_of_string, rec); 
+    //pointerGetStr (mem_start, getAdress, filesize);
+    //my_sort (getAdress, amount_of_string, sizeof (char *), comp);
+    //fileRecord (getAdress, amount_of_string, rec); 
     // --------------
 
+    timer (getAdress, amount_of_string, comp);
+
     // original text:
-    originalText (filesize, mem_start, rec);
+    //originalText (filesize, mem_start, rec);
     // --------------
     
     close (file, rec, mem_start, getAdress);
