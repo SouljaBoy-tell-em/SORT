@@ -11,6 +11,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <cstdint>
+#include <time.h>
 
 
 #define MAIN_DET(detector) if (detector) {                \
@@ -130,6 +131,13 @@ void recordInBuffer (char * mem_start);
 //! @param [in] cur - pointer of current element;
 //! @param [in] prev - pointer of previous element.
 void swap (size_t size, uint8_t * cur, uint8_t * prev);
+
+
+//! Timer;
+//! @param [in] getAdress - pointer of the array strings;
+//! @param [in] amount_of_string - amount of strings;
+//! @param [in] compare - function-comparator (previously: my_comp ()).
+void timer (char ** getAdress, unsigned long amount_of_string, int (* comp) (const void * , const void *));
 
 
 #endif
