@@ -171,3 +171,15 @@ void swap (size_t size, uint8_t * cur, uint8_t * prev) {
         * (prev + i) = temp;
     }
 }
+
+
+void timer (char ** getAdress, unsigned long amount_of_string, int (* comp) (const void * , const void *)) {
+
+    int i = 0;
+    double start = clock ();
+    for (i = 0; i < 20; i++)
+        my_sort (getAdress, amount_of_string, sizeof (char *), comp);
+    double finish = clock ();
+
+    printf ("Time of 20 sortings: %lf\n", (finish - start) / (20 * CLOCKS_PER_SEC));
+}
